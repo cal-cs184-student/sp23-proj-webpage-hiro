@@ -1,0 +1,10 @@
+title: CS284A Project Write-ups
+theme: just-the-docs
+
+plugins:
+  - jekyll-relative-links
+
+exclude:
+  - Gemfile.lock
+  - Gemfile
+  - .gitignore
