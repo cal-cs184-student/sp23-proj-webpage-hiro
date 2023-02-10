@@ -1,5 +1,5 @@
 title: CS284A Project Write-ups
-remote_theme: pmarsceill/just-the-docs
+theme: just-the-docs
 
 plugins:
   - jekyll-relative-links
