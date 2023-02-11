@@ -3,6 +3,8 @@ title: Project 1 - Restarizing Triangle
 layout: default
 ---
 
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+
 # Introduction and Setup
 
 The project is compiled with `Apple clang version 14.0.0`.
@@ -11,8 +13,8 @@ All tests are performed on a 2021 MacBook Pro with Apple M1 Pro CPU (ARM) with d
 
 # Part 1: Rasterizing Simple Triangle
 We implemented the following algorithm to rasgerize simple triangles
-1. Find the bounding box for the triangle by finding $x_{max} = max(x_0, x_1, x_2)$, $x_{min} = min(x_0, x_1, x_2)$ and $y_{max} = max(y_0, y_1, y_2)$ and $y_{min} = min(y_0, y_1, y_2)$.
-2. Loop over all each pixel $(x, y)$ with $x_{min} <= x <= x_{max}$ and $y_{min} <= y <= y_{max}$ and perform point-in-triangle test (described in lecture) on the point $(x + 0.5, y + 0.5)$ to determine if this point is in the triangle with vertices $(x_0, y_0), (x_1, y_1), (x_2, y_2)$.
+1. Find the bounding box for the triangle by finding $$x_{max} = max(x_0, x_1, x_2)$$, $$x_{min} = min(x_0, x_1, x_2)$$ and $$y_{max} = max(y_0, y_1, y_2)$$ and $$y_{min} = min(y_0, y_1, y_2)$$.
+2. Loop over all each pixel $$(x, y)$$ with $$x_{min} <= x <= x_{max}$$ and $$y_{min} <= y <= y_{max}$$ and perform point-in-triangle test (described in lecture) on the point $$(x + 0.5, y + 0.5)$$ to determine if this point is in the triangle with vertices $$(x_0, y_0), (x_1, y_1), (x_2, y_2)$$.
 3. Set `sample_buffer[y * width + x]` with the corresponding color if the point-in-triangle returns `true` in the above step.
 
 Since the winding-order of the vertices are not fixed for our reasterizer, we need to modify the point-in-triangle test a little bit for our purpose. In particular, after computing `L0`, `L1` and `L2` using the formula from the lecture, we check if `(L0 >= 0 && L1 >= 0 && L2 >= 0) || (L0 <= 0 && L1 <= 0 && L2 <= 0)`. That is, the point is in the triangle if either the point is 'inside' all three lines or 'outside' all three lines. Notice also that all checks allows the case `== 0` since the prompt mentioned that we should render points on the bondary as well.
@@ -106,3 +108,29 @@ We have created a running robot. I applied rotation to part of the arms and the 
 <img src="./images/robot_running.png" style="width:50%">
 
 # Part 4: Barycentric Coordinate
+
+# Part 5: Texture Mapping - Pixel Sampling
+Texutre mapping is the process of applying an image (texture) onto the shape / object we are trying to render. Pixel sampling is the way we implement this texture mapping. In general, pixel sampling works by finding a mapping between each pixel on the shape / object to a set of (one or more) texture pixels (i.e., texels) in the texture. At the time of rendering, for each pixel on the shape / object, we then use the mapping to find the set of texels best corresponds to that pixel on screen and use that set of texel to determine which color we should assign to that pixel.
+
+In our implementation specifically, we are asked to apply pixel sampling to each triangle. We were given the texture space coordinate $$(u_i, v_i)$$ for each vertex ($$i \in \{0, 1, 2\}$$) of the triangle. We then perform pixel sampling as following:
+1. For each pixel that is inside the triangle, we compute the Barycentric coordinate of that pixel. We get $$\alpha$$, $$\beta$$ and $$\gamma$$ which is our weight from each vertex of the triangle to that pixel.
+2. We then use these three weights to get the texture space coordinate for that pixel. That is, the texture space coordinate for that pixel is $$(u_{px}, v_{px}) = \alpha * (u_1, v_1) + \beta * (u_2, v_2) + \gamma * (u_3, v_3)$$
+3. Depending on the sampling method (nearest vs. bi-linear), we use $$(u_{px}, v_{px})$$ to compute what color we should assign to that pixel.
+
+For nearest sampling method, we simply take the color of the texel nearest to the coordinate $$(u_{px}, v_{px})$$ as the color that we assign to the pixel.
+
+For bi-linear sampling method, we will take the four texels ($$t_1, t_2, t_3$$ and $$t_4$$) surrounding the coordinate $$(u_{px}, v_{px})$$, we then apply `lerp` (weighted average on $$(u_{px}, v_{px})$$) repeatively to get the resulting color $$c = \text{lerp}(\text{lerp}(t_1, t_2), \text{lerp}(t_3, t_4))$$.
+
+Here is some screenshot using different sampling methods and at different sampling rate. For better presentations, these screenshop are captured with screen resolution 800x600, (you might want to zoom in a little bit for better result)
+
+|Nearest Sampling, Rate = 1|Bi-linear Sampling, Rate = 1|
+|------|-------|
+|<img src="./images/part_6_nearest_1_2.png" style="width:100%">|<img src="./images/part_6_linear_1_2.png" style="width:100%">|
+
+|Nearest Sampling, Rate = 16|Bi-linear Sampling, Rate = 16|
+|------|-------|
+|<img src="./images/part_6_nearest_16_2.png" style="width:100%">|<img src="./images/part_6_linear_16_2.png" style="width:100%">|
+
+As we can see from the screenshot, bi-linear sampling reduces texture aliasing by a lot when supersampling is not activated. However, the result of bi-linear sampling is not so noticeable when sampling rate is 16. This result is in line with the lecture content. Since supersampling would still work in anti texture aliasing, the result of other anti-aliasing measure would become less noticible.
+
+# Part 6: Texture Mapping - Level Sampling
