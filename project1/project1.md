@@ -112,6 +112,13 @@ We have created a running robot. I applied rotation to part of the arms and the 
 <img src="./images/robot_running.png" style="width:50%">
 
 # Part 4: Barycentric Coordinate
+Barycentric coordinates are a method of representing a point within a triangle by using three weights that add up to one. These weights are proportional to the distances between the point and the triangle's three vertices. Consider a triangle with valus at three vertices: \(V_A\), \(V_B\), and \(V_C\). Then the value at each point within the triangle can be represented by a distinct set of barycentric coordinates \(\alpha, \beta, \gamma\), which are the weights associated with each vertex.
+<img src="./images/task4-1.png" style="width:50%" >
+According to the feature shown above, we can calculate each weight with the following equations:
+$$\alpha = \frac{-(x - x_B)(y_C - y_B) + (y - y_B)(x_C - x_B)}{-(x_A - x_B)(y_C - y_B) + (y_A - y_B)(x_C - x_B)}$$
+$$\beta = \frac{-(x - x_C)(y_A - y_C) + (y - y_C)(x_A - x_C)}{-(x_B - x_C)(y_A - y_C) + (y_B - y_C)(x_A - x_C)}$$
+$$\gamma = 1 - \alpha - \beta$$
+And then the value at \((x, y)\) can be calculated by \(V = \alpha V_A + \beta V_B + \gamma V_C\).
 
 # Part 5: Texture Mapping - Pixel Sampling
 Texutre mapping is the process of applying an image (texture) onto the shape / object we are trying to render. Pixel sampling is the way we implement this texture mapping. In general, pixel sampling works by finding a mapping between each pixel on the shape / object to a set of (one or more) texture pixels (i.e., texels) in the texture. At the time of rendering, for each pixel on the shape / object, we then use the mapping to find the set of texels best corresponds to that pixel on screen and use that set of texel to determine which color we should assign to that pixel.
