@@ -124,7 +124,7 @@ Barycentric coordinates are a method of representing a point within a triangle b
 </div>
 </div>
 
-According to the `Feature: task4 triangle` shown above, we can calculate each weight with the following equations:
+According to the `Feature: task4 triangle` shown above, a color is assigned to each vertex of the triangle (red, green, and blue). A linear combination of the three vertices can represent any point inside the triangle, where the weights correspond to the point's barycentric coordinates. The resulting color is a blend of the three vertices' colors, weighted by the barycentric coordinates. Mathemetically, we can calculate each weight with the following equations:
 $$\alpha = \frac{-(x - x_B)(y_C - y_B) + (y - y_B)(x_C - x_B)}{-(x_A - x_B)(y_C - y_B) + (y_A - y_B)(x_C - x_B)}$$
 $$\beta = \frac{-(x - x_C)(y_A - y_C) + (y - y_C)(x_A - x_C)}{-(x_B - x_C)(y_A - y_C) + (y_B - y_C)(x_A - x_C)}$$
 $$\gamma = 1 - \alpha - \beta$$
