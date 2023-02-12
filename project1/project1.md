@@ -112,23 +112,29 @@ We have created a running robot. I applied rotation to part of the arms and the 
 <img src="./images/robot_running.png" style="width:50%">
 
 # Part 4: Barycentric Coordinate
-Barycentric coordinates are a method of representing a point within a triangle by using three weights that add up to one. These weights are proportional to the distances between the point and the triangle's three vertices. Consider a triangle with valus at three vertices: \(V_A\), \(V_B\), and \(V_C\). Then the value at each point within the triangle can be represented by a distinct set of barycentric coordinates \(\alpha, \beta, \gamma\), which are the weights associated with each vertex.
+Barycentric coordinate is a method to represent a point within a triangle by using three weights that add up to one. These weights are proportional to the distances between the point and the triangle's three vertices. Consider a triangle with color valus at three vertices: $$V_A, V_B$$ and $$V_C$$. Then the value at each point within the triangle can be represented by a distinct set of barycentric coordinates $$(\alpha, \beta, \gamma)$$, which are the weights associated with each vertex.
 <div style="width: 100%;display:flex;margin:20px 0px">
 <div style="flex: 1;display:flex;flex-direction: column;align-items: center;">
 <img src="./images/task4-1.png" style="width:70%" >
-<span>Feature: task4 triangle</span>
+<span>Figure: Task4 Triangle</span>
 </div>
 <div style="flex: 1;display:flex;flex-direction: column;align-items: center;">
 <img src="./images/task4-2.png" style="width:75%" >
-<span>Feature: task4 color-gradient</span>
+<span>Figure: Task4 Color-gradient</span>
 </div>
 </div>
 
-According to the `Feature: task4 triangle` shown above, a color is assigned to each vertex of the triangle (red, green, and blue). A linear combination of the three vertices can represent any point inside the triangle, where the weights correspond to the point's barycentric coordinates. The resulting color is a blend of the three vertices' colors, weighted by the barycentric coordinates. Mathemetically, we can calculate each weight with the following equations:
+In `Figure: Task4 Triangle` shown above, a color is assigned to each vertex of the triangle (red, green, and blue). A linear combination of the three vertices can represent any point inside the triangle, where the weights correspond to the point's barycentric coordinates. The resulting color is a blend of the three vertices' colors, weighted by the barycentric coordinates. 
+
+Mathemetically, we can calculate each weight with the following equations:
+
 $$\alpha = \frac{-(x - x_B)(y_C - y_B) + (y - y_B)(x_C - x_B)}{-(x_A - x_B)(y_C - y_B) + (y_A - y_B)(x_C - x_B)}$$
+
 $$\beta = \frac{-(x - x_C)(y_A - y_C) + (y - y_C)(x_A - x_C)}{-(x_B - x_C)(y_A - y_C) + (y_B - y_C)(x_A - x_C)}$$
+
 $$\gamma = 1 - \alpha - \beta$$
-And then the value at \((x, y)\) can be calculated by \(V = \alpha V_A + \beta V_B + \gamma V_C\). `Feature: task4 color-gradient` (svg/basic/test7.svg) is another svg graph rasterized with the barycentric coordinate method.
+
+And then the color value $$V$$ at point $$(x, y)$$ can be calculated by $$(V = \alpha V_A + \beta V_B + \gamma V_C)$$. `Figure: Task4 Color-gradient` (`svg/basic/test7.svg`) is another SVG graph rasterized with the barycentric coordinate method.
 
 
 # Part 5: Texture Mapping - Pixel Sampling
