@@ -1,11 +1,13 @@
 ---
-title: Project 1 - Restarizing Triangle
+title: Project 1 - Rasterizing Triangle
 layout: default
 ---
 
 <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+# CS 284 - Project 1: Restarizing 
 
 # Setup
+This page is avaliable at <https://geos98.github.io/sp23-proj-webpage-hiro/project1/project1.html>
 
 The project is compiled with `Apple clang version 14.0.0`.
 
@@ -17,7 +19,7 @@ In this project, we implemented a simple SVG viewer based on the starter code we
 In particular, we implemented different methods to resterize triangles and apply transformations to these triangles. We also implemented anti-aliasing using different techniques.
 
 # Part 1: Rasterizing Simple Triangle
-We implemented the following algorithm to rasgerize simple triangles
+We implemented the following algorithm to rasterize simple triangles
 1. Find the bounding box for the triangle by finding $$x_{max} = max(x_0, x_1, x_2)$$, $$x_{min} = min(x_0, x_1, x_2)$$ and $$y_{max} = max(y_0, y_1, y_2)$$ and $$y_{min} = min(y_0, y_1, y_2)$$.
 2. Loop over all each pixel $$(x, y)$$ with $$x_{min} <= x <= x_{max}$$ and $$y_{min} <= y <= y_{max}$$ and perform point-in-triangle test (described in lecture) on the point $$(x + 0.5, y + 0.5)$$ to determine if this point is in the triangle with vertices $$(x_0, y_0), (x_1, y_1), (x_2, y_2)$$.
 3. Set `sample_buffer[y * width + x]` with the corresponding color if the point-in-triangle returns `true` in the above step.
@@ -55,7 +57,7 @@ We also noticed that triangle is convex. Therefore, when scanning over a row, on
 
 <img src="./images/half_zigzag.jpg" width="300" height="300">
 
-The above images shows an example of the execution. We would start our inner loop at the left border, then break on the orange pixel and skip the rest of the line. 
+The above images shows an example of the execution. We would start our inner loop at the left border, then break on the orange pixel and skip the rest of the row. 
 
 Here is an comparison of run time for some example images with optimization on and off. All run times are average of three runs.
 |File Name|No Optimization|Loop Reordering|Early Break and Loop Reordering|
@@ -69,7 +71,7 @@ We have, on average of the three test cases, archieve 38.99% improvement in rend
 
 
 # Part 2: Super-Sampling
-On a high-level, our approach towards super-sampling is to use `sample_buffer` as a high-resolution screen space. Then, on `resolve_to_framebuffer` call, we will downsample the `sample_buffer` array to fill the `framebuffer`.
+On a high-level, our approach towards super-sampling is to use `sample_buffer` as a high-resolution screen space. Then, on `resolve_to_framebuffer` call, we will downsample the `sample_buffer` array to fill the `rgb_framebuffer_target`.
 
 Here is our modified rasterizing pipeline:
 1. Re-size the `sample_buffer` array to size `width * height * sample_rate`
@@ -94,7 +96,7 @@ For simplicity, the `sample_buffer` and `rgb_framebuffer_target` here are repres
 
 Nyquist Theorem suggests that aliasing is an artifact from signal frequence exceeds Nyquist frequency (half the sampling frequency). Therefore, in order to reduce alicasing, we could either increase the sampling frequency (which, as a result, increases Nquist frequency) or reduce the signal frequency. 
 
-However, as we are limited by the hardware we have, it would be difficult or costly to increase sampling frequency, therefore, it is more feasiable to reduce signal frequency. That is where supersampling comes in. 
+However, as we are limited by the hardware (i.e., the monitor we have) we have, it would be difficult or costly to increase sampling frequency. Therefore, it is more feasiable to reduce signal frequency. That is where supersampling comes in. 
 
 Supersampling works similar to applying a 1-pixel box-blur to the `sqrt(sample_rate)` by `sqrt(sample_rate)` area. This way, the signal frequency would be reduced (as we blured the original image), thus reducing aliasing.
 
@@ -180,7 +182,7 @@ For nearest level sampling, we would first need to figure out the distance betwe
 1. Suppose we are trying to render the screen pixel at $$(x, y)$$, we find the corresponding texture space coordinate $$(u_{(x, y)}, v_{(x, y)})$$ using the Barycentric weight described in Part 5
 2. We then find the texture space coordinate for the screen pixel at $$(x + 1, y)$$, which is $$(u_{(x + 1, y)}, v_{(x + 1, y)})$$ and for the screen pixel at $$(x, y + 1)$$, which is $$(u_{(x, y + 1)}, v_{(x, y + 1)})$$
 3. We then find the distance between $$(u_{(x, y + 1)}, v_{(x, y + 1)})$$ and $$(u_{(x, y)}, v_{(x, y)})$$ as well as the distance between $$(u_{(x, y + 1)}, v_{(x, y + 1)})$$ and $$(u_{(x, y)}, v_{(x, y)})$$ by computing vector 2-norm of their difference vector.
-4. Take the larger of the two distance $$D$$ and use level $$L = \log_2(D)$$ (rounded to the nearest integer for this sampling method)
+4. Take the larger of the two distance, call it $$D$$, and use level $$L = \log_2(D)$$ (rounded to the nearest integer for this sampling method)
 
 After figuring out the level, we just perform pixel sampling on the texture at Mipmap level $$L$$.
 
