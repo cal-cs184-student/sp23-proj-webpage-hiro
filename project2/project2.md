@@ -25,7 +25,7 @@ De Casteljau's algorithm is a recursive algorithm used to evaluate Bezier curves
 
 With a parameter `t`, and a set of control points at a specific level, the **linear interpolation** function, or `lerp` is the follow
 $$p^{'}_{i} = lerp(p_{i}, p_{i+1}, t)=(1-t)p_{i} + tp_{i+1}$$
-And the implementation is as the following.
+where \(p_{i}, p_{i+1}\) are the consecutive points at the same level, and \(p^{'}_{i}\) is the point generated for the next level. And the implementation is as the following.
 ```cpp
     T inline lerp(const T& a, const T& b, double t) {
         return (1 - t) * a + t * b;
