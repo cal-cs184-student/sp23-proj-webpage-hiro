@@ -23,23 +23,24 @@ In this section, we explore De Casteljau subdivition for Bezier curves and surfa
 ## Part 1: Bezier Curves with 1D de Casteljau Subdivisions
 De Casteljau's algorithm is a recursive algorithm used to evaluate Bezier curves. It works by performing **linear interpolation** function on two consecutive control points (two control points should be in the same level), until there is only one single point at certain level, which is the point on the Bezier curve corresponding to the given parameter value.
 
-With a parameter `t`, and a set of control points at a specific level, the **linear interpolation** function, or `lerp` is the follow
+With a parameter `t`, and a set of control points at a specific level, the **linear interpolation** function, or `lerp` is
 $$p^{'}_{i} = lerp(p_{i}, p_{i+1}, t)=(1-t)p_{i} + tp_{i+1}$$
-where \(p_{i}, p_{i+1}\) are the consecutive points at the same level, and \(p^{'}_{i}\) is the point generated for the next level. And the implementation is as the following.
+where \(p_{i}, p_{i+1}\) are the consecutive points at the same level, and \(p^{'}_{i}\) is the point generated for the next level. 
+<!-- And the implementation is as the following.
 ```cpp
     T inline lerp(const T& a, const T& b, double t) {
         return (1 - t) * a + t * b;
     }
-```
+``` -->
 We evaluated the curve by recursively performing `lerp` at one level, and generating the control points for the next level, until there is one single point at certain level.
-```cpp
+<!-- ```cpp
     std::vector<T> npts(points.size() - 1, T()); // init new control points for the next level
     for (int i = 0; i < points.size() - 1; ++i)  // perform lerp on consecutive points
     { 
         npts[i] = lerp(points[i], points[i + 1], t);
     }
     return npts; // return the points for the next level
-```
+``` -->
 
 | Step 0 | Step 1 | Step 2 |
 |--------|--------|--------|
@@ -61,6 +62,14 @@ A animation of the final evaluation point moving along the `t`.
 
 
 ## Part 2: Bezier Surfaces with Separable 1D de Casteljau
+The separate 1D de Casteljau algorithm can be extended to evaluate Bezier surfaces, which are two-dimensional shapes defined by a network of control points. To evaluate a Bezier surface using the separate 1D de Casteljau algorithm, we first apply the algorithm in one direction (the `u` direction) to obtain 4 intermediate curves. We then apply the algorithm to each of these intermediate curves in the other direction (the `v` direction) to obtain the final value of the surface.
+
+In terms of implementation, we have the follow steps:
+1. For each row in `controlLists`, we apply 1D `lerp` with parameter `u` on consecutive control points.
+2. So for each row, we will eventually get a single control point with parameter `u`, save the point for later calculation along another direction.
+3. With the newly generated control points, we again perform 1D `lerp` with parameter `v`. And similarly, we will eventually get a single point for the Bezier patch with given `u, v`.
+
+
 <img src="./images/part-2.png" style="width:60%">
 
 # Section II: Triangle Meshes and Half-Edge Data Structure
