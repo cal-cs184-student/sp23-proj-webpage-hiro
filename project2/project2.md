@@ -21,42 +21,31 @@ In the second section of this assignment, we worked with Halfedge data structure
 In this section, we explore De Casteljau subdivition for Bezier curves and surfaces.
 
 ## Part 1: Bezier Curves with 1D de Casteljau Subdivisions
-De Casteljau's algorithm is a recursive algorithm used to evaluate Bezier curves. It works by performing **linear interpolation** function on two consecutive control points (two control points should be in the same level), until there is only one single point at certain level, which is the point on the Bezier curve corresponding to the given parameter value.
+De Casteljau's algorithm is a recursive algorithm used to evaluate Bezier curves or surfaces. It works by performing **linear interpolation** on two consecutive control points (on the same level) given parameter $$t$$ to generate a set of new intermediate points. The algorightm stops when there is only one single point left, which is the point on the Bezier curve corresponding to the given parameter value $$t$$.
 
-With a parameter `t`, and a set of control points at a specific level, the **linear interpolation** function, or `lerp` is
-$$p^{'}_{i} = lerp(p_{i}, p_{i+1}, t)=(1-t)p_{i} + tp_{i+1}$$
-where \(p_{i}, p_{i+1}\) are the consecutive points at the same level, and \(p^{'}_{i}\) is the point generated for the next level. 
-<!-- And the implementation is as the following.
-```cpp
-    T inline lerp(const T& a, const T& b, double t) {
-        return (1 - t) * a + t * b;
-    }
-``` -->
-We evaluated the curve by recursively performing `lerp` at one level, and generating the control points for the next level, until there is one single point at certain level.
-<!-- ```cpp
-    std::vector<T> npts(points.size() - 1, T()); // init new control points for the next level
-    for (int i = 0; i < points.size() - 1; ++i)  // perform lerp on consecutive points
-    { 
-        npts[i] = lerp(points[i], points[i + 1], t);
-    }
-    return npts; // return the points for the next level
-``` -->
+Specifically, given a parameter $$t$$, and a set of control points $$p_i$$ at a specific level, the **linear interpolation** function, or `lerp` for generating control points for the next level is as following
 
-| Step 0 | Step 1 | Step 2 |
+$$p^{'}_{i} = \text{lerp}(p_{i}, p_{i+1}, t)=(1-t)p_{i} + tp_{i+1}$$
+
+where $$p_{i}, p_{i+1}$$ are the consecutive control points on the previous level, and $$p^{'}_{i}$$ is the point generated for the next level.
+
+Below are an example of this algorithm running on a set of 6 control points. 
+
+| Level 0 | Level 1 | Level 2 |
 |--------|--------|--------|
 |<img src="./images/part-1-s0.png" style="width:100%">|<img src="./images/part-1-s1.png" style="width:100%">|<img src="./images/part-1-s2.png" style="width:100%">|
 
-| Step 3 | Step 4 | Step 5 |
+| Level 3 | Level 4 | Level 5 |
 ---------|--------|--------|
 |<img src="./images/part-1-s3.png" style="width:100%">|<img src="./images/part-1-s4.png" style="width:100%">|<img src="./images/part-1-s5.png" style="width:100%">|
 
 
-The curve with one slightly modified control point
+The same curve with one slightly modified control point
 
 <img src="./images/part-1-diff.png" style="width:60%">
 
-A animation of the final evaluation point moving along the `t`.
-(NOTE: this is an animation, you need to view it on the webpage instead of on the PDF file)
+An animation of the final evaluation point moving when changing the parameter value $$t$$.  
+(**NOTE**: this is an animation, you need to view it on the webpage instead of on the PDF file)
 
 <img src="./images/part-1-mov2.gif" style="width:60%">
 
@@ -76,7 +65,26 @@ In terms of implementation, we have the follow steps:
 ## Part 3: Area-Weighted Vertex Normals
 
 ## Part 4: Edge Flip
+
+Before Flip:
+
+<img src="./images/before-sketch.png" style="width:60%">
+
+After Flip:
+
+<img src="./images/part-4-after-sketch.png" style="width:60%">
+
 ## Part 5: Edge Split
+
+Before Split:
+
+<img src="./images/before-sketch.png" style="width:60%">
+
+After Split:
+
+<img src="./images/part-5-after-sketch.png" style="width:60%">
+
+
 ## Part 6: Loop Subdivision for Mesh Upsampling
 
 
