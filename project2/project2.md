@@ -51,9 +51,12 @@ We evaluated the curve by recursively performing `lerp` at one level, and genera
 
 
 The curve with one slightly modified control point
+
 <img src="./images/part-1-diff.png" style="width:60%">
+
 A animation of the final evaluation point moving along the `t`.
 (NOTE: this is an animation, you need to view it on the webpage instead of on the PDF file)
+
 <img src="./images/part-1-mov2.gif" style="width:60%">
 
 
