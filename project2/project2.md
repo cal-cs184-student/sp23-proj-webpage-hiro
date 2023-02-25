@@ -26,7 +26,7 @@ And the implementation is as the following.
         return (1 - t) * a + t * b;
     }
 ```
-We evaluated the curve by recursively performing `lerp` on one level, and generating the control points for the next level, until there is one single point at certain level.
+We evaluated the curve by recursively performing `lerp` at one level, and generating the control points for the next level, until there is one single point at certain level.
 ```cpp
     std::vector<T> npts(points.size() - 1, T()); // init new control points for the next level
     for (int i = 0; i < points.size() - 1; ++i)  // perform lerp on consecutive points
