@@ -51,13 +51,14 @@ An animation of the final evaluation point moving when changing the parameter va
 
 
 ## Part 2: Bezier Surfaces with Separable 1D de Casteljau
-The separate 1D de Casteljau algorithm can be extended to evaluate Bezier surfaces, which are two-dimensional shapes defined by a network of control points. To evaluate a Bezier surface using the separate 1D de Casteljau algorithm, we first apply the algorithm in one direction (the `u` direction) to obtain 4 intermediate curves. We then apply the algorithm to each of these intermediate curves in the other direction (the `v` direction) to obtain the final value of the surface.
+The 1D de Casteljau algorithm can be extended to evaluate Bezier surfaces, which are two-dimensional shapes defined by a network of control points. To evaluate a Bezier surface using the 1D de Casteljau algorithm, we first apply the algorithm in one direction (with parameter value $$u$$) to obtain a set of evaluated points on this direction. We then use this set of points as the new input control points for the other direction (with parameter value $$v$$). After evaluation, we will eventually get only 1 point as the final evaluated point for paremeter value $$(u, v)$$.
 
 In terms of implementation, we have the follow steps:
 1. For each row in `controlLists`, we apply 1D `lerp` with parameter `u` on consecutive control points.
 2. So for each row, we will eventually get a single control point with parameter `u`, save the point for later calculation along another direction.
-3. With the newly generated control points, we again perform 1D `lerp` with parameter `v`. And similarly, we will eventually get a single point for the Bezier patch with given `u, v`.
+3. With the newly generated control points, we again perform 1D `lerp` with parameter `v`. And similarly, we will eventually get a single point for the Bezier patch with given parameter value `(u, v)`.
 
+Here is a screenshot of `bez/teapot.bez`.
 
 <img src="./images/part-2.png" style="width:60%">
 
