@@ -67,13 +67,27 @@ Here is a screenshot of `bez/teapot.bez`.
 
 ## Part 4: Edge Flip
 
-Before Flip:
+We believe the tip from the assignment prompt is very useful. We hand-drew an example of an edge flip (shown below) with all elements (before and after the flip) labeled. We then used this hand-drew example to re-assign any element for an edge flip.
 
-<img src="./images/before-sketch.png" style="width:60%">
+|Before Flip: | After Flip: |
+|-------------|-------------|
+|<img src="./images/before-sketch.png" style="width:100%">|<img src="./images/part-4-after-sketch.png" style="width:100%">|
 
-After Flip:
+Our implementation is as following:
+1. Use `e0` to get `h0`
+2. From `h0` and `h0->twin()`, we were able to traverse the two triangles and get all the elements shown in the "Before Flip" figure
+3. Re-assign all the half-edges to their new neighbours shown in the "After Flip" figure
+4. Re-assign all vertices, edges and faces to theri new half-edge
 
-<img src="./images/part-4-after-sketch.png" style="width:60%">
+We later noticed the half-edge associated with `e1`, `e2`, `e3` and `e4` does not change, so we removed these four edges from step 4.
+
+We were able to implement edge split without any bug in the first try, so our exeperience for this part is very smooth.
+
+Below is some screenshot of some edge flip
+
+|Original: | After Flip: |
+|----------|-------------|
+|<img src="./images/part-4-0.png" style="width:100%">|<img src="./images/part-4-1.png" style="width:100%">|
 
 ## Part 5: Edge Split
 
