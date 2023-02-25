@@ -48,6 +48,8 @@ We evaluated the curve by recursively performing `lerp` at one level, and genera
 | Step 3 | Step 4 | Step 5 |
 ---------|--------|--------|
 |<img src="./images/part-1-s3.png" style="width:100%">|<img src="./images/part-1-s4.png" style="width:100%">|<img src="./images/part-1-s5.png" style="width:100%">|
+
+
 The curve with one slightly modified control point
 <img src="./images/part-1-diff.png" style="width:60%">
 A animation of the final evaluation point moving along the `t`.
