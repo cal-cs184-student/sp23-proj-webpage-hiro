@@ -83,7 +83,7 @@ We later noticed the half-edge associated with `e1`, `e2`, `e3` and `e4` does no
 
 We were able to implement edge split without any bug in the first try, so our exeperience for this part is very smooth.
 
-Below is some screenshot of some edge flip
+Below are some screenshots of `dae/teapot.dae` with some edge flips
 
 |Original: | After Flip: |
 |----------|-------------|
@@ -91,14 +91,46 @@ Below is some screenshot of some edge flip
 
 ## Part 5: Edge Split
 
-Before Split:
+Similar to Part 4, we hand-drew an before vs. after example for splitting triangle mesh.
 
-<img src="./images/before-sketch.png" style="width:60%">
+|Before Split: | After Split: |
+|--------------|--------------|
+|<img src="./images/before-sketch.png" style="width:100%">|<img src="./images/part-5-after-sketch.png" style="width:100%">|
 
-After Split:
+Again, our implementation is as following:
+1. Use `e0` to get `h0`. Then, use `h0` and `h0->twin()` to get all elements that appeared on the "Before Split:" figure
+2. We create all new element using the `newHalfedge`, `newEdge`, `newFace` and `newVertex` function.  
+   In particular, we need to create:  
+   - new vertex `M`;  
+   - new half-edges `h3`, `h4`, `h5`, `ht3`, `ht4` and `ht5`; 
+   - new edges `e5`, `e6` and `e7`; and finally,
+   - new faces `f2` and `f3` 
 
-<img src="./images/part-5-after-sketch.png" style="width:60%">
+   For the new position of vertex `M`, we simply used `0.5 * (v0.position + v1.position)` as a default. 
+3. Assign new neighbours to all hald-edges according to the "After Split:" figure.
+4. Assign new half-edges to all elements according to the "After Split:" figure.
 
+Below are some screenshots of `dae/teapot.dae` with some edge splits and flips
+
+|Original Model|After Splits| After Flips|
+|--------------|--------------|----------|
+|<img src="./images/part-5-0.png" style="width:100%">|<img src="./images/part-5-1.png" style="width:100%">|<img src="./images/part-5-2.png" style="width:100%">|
+
+### Extra Credit
+
+We also implemented edge split for boundary edge.
+
+The implementation is very similar to above, except we ignore the lower half triangle shown in our hand-drew figures. 
+
+Two details that we need to handle for the boundary case is 
+1. In step 1 of the original implementation, we need to check if `e0->halfedge()` is the halfedge on a boundary or on a regular face. If `e0->halfedge()` is on a boundary, we need to use `e0->halfedge()->twin()` (i.e., the half-edge that is not on boundary) as `h0`.
+2. In step 3, instead of assigning `ht3` to a new face, we assign `ht3` to the same boundary face `ht0` is on.
+
+Below are some screenshots of `dae/beetles.dae` before and after splitting some boundary edges.
+
+| Original Model | Split Boundary |
+|----------------|----------------|
+|<img src="./images/part-5-extra-0.png" style="width:100%">|<img src="./images/part-5-extra-1.png" style="width:100%">|
 
 ## Part 6: Loop Subdivision for Mesh Upsampling
 
