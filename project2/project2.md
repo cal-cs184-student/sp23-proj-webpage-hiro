@@ -64,6 +64,19 @@ Here is a screenshot of `bez/teapot.bez`.
 
 # Section II: Triangle Meshes and Half-Edge Data Structure
 ## Part 3: Area-Weighted Vertex Normals
+Typically, in order to compute the Area-Weighted Vertex Normals of a specific vertex, we must first compute the norms of all the surrounding faces (triangles with the vertex as one of their vertices), weight the norm by area, and then normalize it.
+
+The implementation of the Area-Weighted Vertex Normals has the following procedures:
+1. First we choose a specific vertex `_v`, and get its halfedge `_halfedge`(in part 3, we initialize a const `HalfedgeCIter`)
+2. With the face of this halfedge, we calculate norms for its three halfedge by performing `cross` on consecutive vertices.
+3. Perform step 2 for all the surrounding faces of vertex `v` and sum up the norms `N`.
+4. Normalize `N` with the function `N.unit()` to get the final answer.
+
+
+|Without vertex normals: | Without vertex normals: |
+|----------|-------------|
+|<img src="./images/p3-0.png" style="width:100%">|<img src="./images/p3-1.png" style="width:100%">|
+
 
 ## Part 4: Edge Flip
 
