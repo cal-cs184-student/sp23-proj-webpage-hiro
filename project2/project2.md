@@ -64,14 +64,41 @@ Here is a screenshot of `bez/teapot.bez`.
 
 # Section II: Triangle Meshes and Half-Edge Data Structure
 ## Part 3: Area-Weighted Vertex Normals
-Typically, in order to compute the Area-Weighted Vertex Normals of a specific vertex, we must first compute the norms of all the surrounding faces (triangles with the vertex as one of their vertices), weight the norm by area, and then normalize it.
+Typically, in order to compute the Area-Weighted Vertex Normals of a specific vertex, we must first compute the area-weighted normal vectors of all the surrounding faces (triangles with the vertex as one of their vertices), then normalize the sum of all neighbouring faces' area-weighted normal vectors.
 
-The implementation of the Area-Weighted Vertex Normals has the following procedures:
-1. First we choose a specific vertex `_v`, and get its halfedge `_halfedge`(in part 3, we initialize a const `HalfedgeCIter`)
-2. With the face of this halfedge, we calculate norms for its three halfedge by performing `cross` on consecutive vertices.
-3. Perform step 2 for all the surrounding faces of vertex `v` and sum up the norms `N`.
+First, we noticed that for a triangle with vertecies $$v_1, v_2$$ and $$v_3$$, the area of this triangle can be computed with 
+
+$$ \begin{align}
+    A &= \frac{1}{2} \| (v_1 - v_2) \times (v_1 - v_3) \| \\
+      &= \frac{1}{2}(\|v_1 \times v_2 + v_2 \times v_3 + v_3 \times v_1\|)\
+    \end{align}
+$$
+
+Second, we also noticed that the unit normal vector of a triangular face with vertecies $$v_1, v_2$$ and $$v_3$$ can be approximated by the sum of all normal vectors at each vertex. That is, the unit normal vector of a face $$F$$ can be computed by 
+
+$$ \begin{align}
+    \vec{n_F} &=  \frac{(v_1 - v_2) \times (v_1 - v_3) + (v_2 - v_1) \times (v_2 - v_3) + (v_3 - v_1) \times (v_3 - v_2)}{\|(v_1 - v_2) \times (v_1 - v_3) + (v_2 - v_1) \times (v_2 - v_3) + (v_3 - v_1) \times (v_3 - v_2)\|} \\
+        &= \frac{v_1\times v_2 + v_2 \times v_3 + v_3 \times v_1}{\|v_1\times v_2 + v_2 \times v_3 + v_3 \times v_1\|}
+    \end{align}
+$$
+
+Notice that computing the area of a triangular face and computing the normal vector of a triangular face basically shares the same formula. That is, we can do both at the same time. The area weighted normal vector of a face $$F$$ with vertecies $$v_1, v_2$$ and $$v_3$$ is
+
+$$ A_F \vec{n_F} = \frac{1}{2} (v_1\times v_2 + v_2 \times v_3 + v_3 \times v_1) $$
+
+Since we will normalize anyway, we can ignore the constant term at the beginning. (Proof of above sections are left as an exercise to our readers.)
+
+Therefore, our implementation of the Area-Weighted Vertex Normals has the following procedures:
+Let `v` be the vertex we are computing its normal vector on.
+1. Let `N` be a temporary variable of type `Vector3D` which stores the sum of $$A_F \cdot \vec{n_F}$$ for each `F` surrounding the vertex `v`
+2. For each face `F` surrounding the vertex, iterate over all adjecent vertecies of the face and compute cross product of the two adjacent vertex positions. Add this sum of normal vectors to `N`
+
+   Notice that in this step, what we are basically doing is 
+   
+   $$N = N + (v_1\times v_2 + v_2 \times v_3 + v_3 \times v_1)$$ 
+   
+   for each $$v_1, v_2, v_3$$ of the face `F`
 4. Normalize `N` with the function `N.unit()` to get the final answer.
-
 
 |Without vertex normals: | Without vertex normals: |
 |----------|-------------|
