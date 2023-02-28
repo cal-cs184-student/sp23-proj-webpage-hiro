@@ -14,7 +14,7 @@ All tests are performed on a 2021 MacBook Pro with Apple M1 Pro CPU (ARM).
 
 In the first section of this assignment, we implemented De Casteljau subdivition for Bezier curves and surfaces. 
 
-In the second section of this assignment, we worked with Halfedge data structure. We first implemented an algorithm for computing vertex norm using neighbouring surfaces. We can then do Phong shading using this normal vector. We then implemented local operations including edge flipping and edge splittng and implemented loop-subdivision algorithm using these operations.
+In the second section of this assignment, we worked with Halfedge data structure. We first implemented an algorithm for computing normal vectors of vertices using neighbouring surfaces. We can then do Phong shading using this normal vector. We then implemented local operations including edge flipping and edge splittng and implemented loop-subdivision algorithm using these operations.
 
 # Section I: Bezier Curves and Surfaces
 
@@ -66,7 +66,7 @@ Here is a screenshot of `bez/teapot.bez`.
 ## Part 3: Area-Weighted Vertex Normals
 Typically, in order to compute the Area-Weighted Vertex Normals of a specific vertex, we must first compute the area-weighted normal vectors of all the surrounding faces (triangles with the vertex as one of their vertices), then normalize the sum of all neighbouring faces' area-weighted normal vectors.
 
-First, we noticed that for a triangle with vertecies $$v_1, v_2$$ and $$v_3$$, the area of this triangle can be computed with 
+First, we noticed that for a triangle with vertices $$v_1, v_2$$ and $$v_3$$, the area of this triangle can be computed with 
 
 $$ \begin{align}
     A &= \frac{1}{2} \| (v_1 - v_2) \times (v_1 - v_3) \| \\
@@ -74,7 +74,7 @@ $$ \begin{align}
     \end{align}
 $$
 
-Second, we also noticed that the unit normal vector of a triangular face with vertecies $$v_1, v_2$$ and $$v_3$$ can be approximated by the sum of all normal vectors at each vertex. That is, the unit normal vector of a face $$F$$ can be computed by 
+Second, we also noticed that the unit normal vector of a triangular face with vertices $$v_1, v_2$$ and $$v_3$$ can be approximated by the sum of all normal vectors at each vertex. That is, the unit normal vector of a face $$F$$ can be computed by 
 
 $$ \begin{align}
     \vec{n_F} &=  \frac{(v_1 - v_2) \times (v_1 - v_3) + (v_2 - v_1) \times (v_2 - v_3) + (v_3 - v_1) \times (v_3 - v_2)}{\|(v_1 - v_2) \times (v_1 - v_3) + (v_2 - v_1) \times (v_2 - v_3) + (v_3 - v_1) \times (v_3 - v_2)\|} \\
@@ -82,7 +82,7 @@ $$ \begin{align}
     \end{align}
 $$
 
-Notice that computing the area of a triangular face and computing the normal vector of a triangular face basically shares the same formula. That is, we can do both at the same time. The area weighted normal vector of a face $$F$$ with vertecies $$v_1, v_2$$ and $$v_3$$ is
+Notice that computing the area of a triangular face and computing the normal vector of a triangular face basically shares the same formula. That is, we can do both at the same time. The area weighted normal vector of a face $$F$$ with vertices $$v_1, v_2$$ and $$v_3$$ is
 
 $$ A_F \vec{n_F} = \frac{1}{2} (v_1\times v_2 + v_2 \times v_3 + v_3 \times v_1) $$
 
@@ -91,7 +91,7 @@ Since we will normalize anyway, we can ignore the constant term at the beginning
 Therefore, our implementation of the Area-Weighted Vertex Normals has the following procedures:
 Let `v` be the vertex we are computing its normal vector on.
 1. Let `N` be a temporary variable of type `Vector3D` which stores the sum of $$A_F \cdot \vec{n_F}$$ for each `F` surrounding the vertex `v`
-2. For each face `F` surrounding the vertex, iterate over all adjecent vertecies of the face and compute cross product of the two adjacent vertex positions. Add this sum of normal vectors to `N`
+2. For each face `F` surrounding the vertex, iterate over all adjecent vertices of the face and compute cross product of the two adjacent vertex positions. Add this sum of normal vectors to `N`
 
    Notice that in this step, what we are basically doing is 
    
@@ -100,7 +100,7 @@ Let `v` be the vertex we are computing its normal vector on.
    for each $$v_1, v_2, v_3$$ of the face `F`
 4. Normalize `N` with the function `N.unit()` to get the final answer.
 
-|Without vertex normals: | Without vertex normals: |
+|Regular Shading: | Phong Shading: |
 |----------|-------------|
 |<img src="./images/p3-0.png" style="width:100%">|<img src="./images/p3-1.png" style="width:100%">|
 
@@ -150,6 +150,10 @@ Again, our implementation is as following:
 3. Assign new neighbours to all hald-edges according to the "After Split:" figure.
 4. Assign new half-edges to all elements according to the "After Split:" figure.
 
+We found that a good strategy for debugging is to add `assert` statements to test the relationships between each elements against our expectation set in the "After Split" figure. 
+
+For example, we could add lines like `assert(h3->twin() == ht3)` or `assert(h2->next == h3)` etc. We found these assertion would help us finding typos in code which would then result in mis-assignments of elements faster and easier.
+
 Below are some screenshots of `dae/teapot.dae` with some edge splits and flips
 
 |Original Model|After Splits| After Flips|
@@ -190,9 +194,9 @@ Here is an overview of our implementation:
 5. For each edge `e` currently in the mesh, if `e->isNew` and this edge connect a new vertex to an old vertex, flip the edge by calling `mesh.flipEdge(e)`.
 6. For each vertex `v` in the current mesh, set the position to its new position (i.e., `v->position = v->newPosition`)
 
-We noticed that sharp edges and corners gets rounded out when doing loop sub-division. We believe this is due to at each level of subdivision, when we split edge on the sharp edge, we compute the new position of the vertex weighted on all neighbouring vertecies. The neighbouring vertecies basically "pulls" the sharp edge back everytime we try to upsample. Therefore, the sharp edge becomes more rounded at the end. 
+We noticed that sharp edges and corners gets rounded out when doing loop sub-division. We believe this is due to at each level of subdivision, when we split edge on the sharp edge, we compute the new position of the vertex weighted on all neighbouring vertices. The neighbouring vertices basically "pulls" the sharp edge back every time we try to upsample. Therefore, the sharp edge becomes more rounded at the end. 
 
-This could be countered by pre-splitting near the sharp edge to make all negibhouring vertecies closer to the sharp edge. That way, there will be less "pull back" which could then preserve the sharpness of the edge.
+This could be countered by pre-splitting near the sharp edge to make all negibhouring vertices closer to the sharp edge. That way, there will be less "pull back" which could then preserve the sharpness of the edge.
 
 Below are screen shots of the `dae/cube.dae` upsampling with and without pre-splitting. Notice that the edge on the upper-right of the screen was able to preserve (a little bit) with some pre-splitting
 
@@ -216,9 +220,9 @@ Below are screen shots of the `dae/cube.dae` upsampling with and without pre-spl
 |---------|--------|
 |<img src="./images/part-6-0-1-2.png" style="width:100%">|<img src="./images/part-6-0-1-3.png" style="width:100%">|
 
-We also noticed that `dae/cube.dae` becomes slightly asymmetric after some rounds of subdivition. This is because each face (geometric fase, not mesh face) of the cube is divided to only two triangles, which means the four vertecies on each face of the cube have different degrees (i.e., different number of neighbours). This further means that when computing the new position of the vertex, vertecies with different degrees would not move symmetrically, which ultimately caused the asymmetry at the end.
+We also noticed that `dae/cube.dae` becomes slightly asymmetric after some rounds of subdivition. This is because each face (geometric fase, not mesh face) of the cube is divided to only two triangles, which means the four vertices on each face of the cube have different degrees (i.e., different number of neighbours). This further means that when computing the new position of the vertex, vertices with different degrees would not move symmetrically, which ultimately caused the asymmetry at the end.
 
-To alleviate this effect, we can pre-split each face of the cube to be consisted with four triangular mesh. This way, all the vertecies will share the same number of neighbours and would move symmetrically.
+To alleviate this effect, we can pre-split each face of the cube to be consisted with four triangular mesh. This way, all the vertices will share the same number of neighbours and would move symmetrically.
 
 Here are some screenshots for this effect and our pre-split
 
@@ -244,11 +248,11 @@ Here are some screenshots for this effect and our pre-split
 
 ### Extra Credit:
 
-We also implemented loop-subdivision on boundary faces and edges. Basically, it is exactly the same implementation compared to the regular algorithm, except on how we compute new vertex positions for new and old vertecies on the boundary edge. 
+We also implemented loop-subdivision on boundary faces and edges. Basically, it is exactly the same implementation compared to the regular algorithm, except on how we compute new vertex positions for new and old vertices on the boundary edge. 
 
-After some investigation, we found out that for the new position associated to an existing vertex $$V$$, the new position will be $$\frac{1}{8}(A + B) + \frac{3}{4}V$$ where where $$A$$ and $$B$$ are the two neighbouring vertecies along the boundary edge.
+After some researching online, we found out that for the new position associated to an existing vertex $$V$$, the new position will be $$\frac{1}{8}(A + B) + \frac{3}{4}V$$ where $$A$$ and $$B$$ are the two neighbouring vertices along the boundary edge.
 
-The new potision associated to a new vertex after splitting edge $$E$$ is simply $$\frac{1}{2} (A + B)$$ where $$A$$ and $$B$$ are the two vertecies on the two ends of the edge $$E$$.
+The new potision associated to a new vertex after splitting edge $$E$$ is simply $$\frac{1}{2} (A + B)$$ where $$A$$ and $$B$$ are the two vertices on the two ends of the edge $$E$$.
 
 Below is an example of subdividing a mesh with boundaries (`dae/beetle.dae`). 
 
