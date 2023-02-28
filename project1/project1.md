@@ -7,7 +7,7 @@ layout: default
 # CS 284 - Project 1: Restarizing 
 
 # Setup
-This page is avaliable at <https://geos98.github.io/sp23-proj-webpage-hiro/project1/project1.html>
+This page is avaliable at <https://cal-cs184-student.github.io/sp23-proj-webpage-hiro/project1/project1.html>
 
 The project is compiled with `Apple clang version 14.0.0`.
 

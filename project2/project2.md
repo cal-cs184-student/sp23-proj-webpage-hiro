@@ -7,6 +7,8 @@ layout: default
 
 # Setup
 
+This page is avaliable at <https://cal-cs184-student.github.io/sp23-proj-webpage-hiro/project2/project2.html>
+
 The project is compiled with `Apple clang version 14.0.0`.
 All tests are performed on a 2021 MacBook Pro with Apple M1 Pro CPU (ARM).
 
