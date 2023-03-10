@@ -73,6 +73,9 @@ We also compared rendering time with and without BVH. The following test is perf
 |----|---------|-----------|--------|
 |`meshedit/teapot.dae`|<img src="./images/p2_teapot.png" width=200/>|10.5519s|0.4991s|
 |`keenan/banana.dae`|<img src="./images/p2_banana.png" width=200/>|10.8643s|0.2079s|
+|`sky/CBempty.dae`|<img src="./images/p1_CBempty.png" width=200/>|0.1142s|0.1322s|
+
+We see that BVH optimization greatly reduced the rendering time for more complex meshes due to the `O(log n)` asymptotic complexity. However, as we shown in the example for `CBempty.dae`, the performance of BVH is actually worse when the mesh is relatively simple. We believe this is because of the overhead introduced by recursion. We believe that a loop-based solution (i.e., loop + stack) might be able to resolve this issue and further improve the performance of BVH. 
 
 ## Part 3: Direct Illumination
 
