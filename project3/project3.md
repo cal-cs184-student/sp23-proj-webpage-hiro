@@ -42,13 +42,13 @@ For our triangle intersection algorithm, we used Moller-Trumbore:
 
 Here are some images we rendered after completing these tasks
 
-| CBempty                                                | dragon                                                |
+| CBempty                                                | Cube                                                |
 | ------------------------------------------------------ | ----------------------------------------------------- |
-| <img src="./images/p1_CBempty.png" style="width:100%"> | <img src="./images/p1_dragon.png" style="width:100%"> |
+| <img src="./images/p1_CBempty.png" style="width:100%"> | <img src="./images/p1_cube.png" style="width:100%"> |
 
-| CBshphere                                              | CBlucy |
+| CBshphere                                              | Plane |
 | ------------------------------------------------------ |-----------------|
-| <img src="./images/p1_CBsphere.png" style="width:100%"> | <img src="./images/p1_CBlucy.png" style="width:100%"> |
+| <img src="./images/p1_CBsphere.png" style="width:100%"> | <img src="./images/p1_plane.png" style="width:100%"> |
 
 ## Part 2: Bounding Volume Hierarchy
 
@@ -61,9 +61,18 @@ The `construct_bvh` function takes a vector of primitives and a maximum leaf siz
 3. Next, it performs an in-place partition of the primitives based on their centroid coordinates along the chosen axis, such that all the primitives on the left side of the split come before all the primitives on the right side. It then recursively calls the split_bvh function on the left and right groups of primitives, and sets the left and right child nodes of the current node to the returned nodes
 4. Returns the current node pointer.
 
-| CBbunny                                                | CBlucy                                               |
+The following are some examples with many primitives that rendering without BVH could take very very long.
+
+| CBlucy                                                | Dragon                                               |
 | ------------------------------------------------------ | ---------------------------------------------------- |
-| <img src="./images/p2_CBbunny.png" style="width:100%"> | <img src="./images/p2_cblue.png" style="width:100%"> |
+| <img src="./images/p2_CBlucy.png" style="width:100%"> | <img src="./images/p2_dragon.png" style="width:100%"> |
+
+We also compared rendering time with and without BVH. The following test is performed with all default parameter and resolution 480 x 360
+
+|File|Rendering|Without BVH|With BVH|
+|----|---------|-----------|--------|
+|`meshedit/teapot.dae`|<img src="./images/p2_teapot.png" width=200/>|10.5519s|0.4991s|
+|`keenan/banana.dae`|<img src="./images/p2_banana.png" width=200/>|10.8643s|0.2079s|
 
 ## Part 3: Direct Illumination
 
