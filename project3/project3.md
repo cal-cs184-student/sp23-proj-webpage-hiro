@@ -67,15 +67,15 @@ The following are some examples with many primitives that rendering without BVH 
 | ------------------------------------------------------ | ---------------------------------------------------- |
 | <img src="./images/p2_CBlucy.png" style="width:100%"> | <img src="./images/p2_dragon.png" style="width:100%"> |
 
-We also compared rendering time with and without BVH. The following test is performed with all default parameter and resolution 480 x 360
+We also compared rendering time with and without BVH. The following test is performed with all default parameter and resolution 480 x 360. All results are average of three runs.
 
 |File|Rendering|Without BVH|With BVH|
 |----|---------|-----------|--------|
-|`meshedit/teapot.dae`|<img src="./images/p2_teapot.png" width=200/>|10.5519s|0.4991s|
-|`keenan/banana.dae`|<img src="./images/p2_banana.png" width=200/>|10.8643s|0.2079s|
-|`sky/CBempty.dae`|<img src="./images/p1_CBempty.png" width=200/>|0.1142s|0.1322s|
+|`meshedit/teapot.dae`|<img src="./images/p2_teapot.png" width=200/>|10.5519s|0.5114s|
+|`keenan/banana.dae`|<img src="./images/p2_banana.png" width=200/>|10.8643s|0.2152s|
+|`sky/CBempty.dae`|<img src="./images/p1_CBempty.png" width=200/>|0.1392s|0.1444s|
 
-We see that BVH optimization greatly reduced the rendering time for more complex meshes due to the `O(log n)` asymptotic complexity. However, as we shown in the example for `CBempty.dae`, the performance of BVH is actually worse when the mesh is relatively simple. We believe this is because of the overhead introduced by recursion. We believe that a loop-based solution (i.e., loop + stack) might be able to resolve this issue and further improve the performance of BVH. 
+We see that BVH optimization greatly reduced the rendering time for more complex meshes due to the `O(log n)` asymptotic complexity. However, as we shown in the example for `CBempty.dae`, the performance of BVH is very close to the non-optimized version when the mesh is simple. This is because as there is not many premitives, there aren't anything the BVH can help skip when tracing the ray. Therefore, performance of BVH would be similar to the naive approach.
 
 ## Part 3: Direct Illumination
 
