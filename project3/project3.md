@@ -43,6 +43,26 @@ The `construct_bvh` function takes a vector of primitives and a maximum leaf siz
 
 ## Part 3: Direct Illumination
 
+#### _1. Direct Lighting with Uniform Hemisphere Sampling_
+
+Here are the steps of our implementation of `estimate_direct_lighting_hemisphere`
+
+1. Create a coordinate system for the hit point `isect`, with the surface normal `isect.n` aligned with the Z-axis.
+2. Compute the hit point `hit_p` and the outgoing direction `w_out` by transforming the ray direction `r.d` into object space using the inverse of the coordinate system.
+3. Then, it samples points on a hemisphere around the intersection point. Set the number of samples to be the total number of area light samples multiplied by the number of lights in the scene. And for each sample, it traces a ray in the sample direction to see if it hits an object in the scene.
+4. If it does, then compute the contribution of the light at intersection `isect2` by evaluating the product of the BSDF value at `isect` for the outgoing direction `w_out`, the emission of the light at `isect2`, and the cosine of the angle between `w_i` and the surface normal at `isect2`.
+5. The total contribution is then accumulated over all samples and divided by the number of samples to produce an estimate of the direct lighting at the intersection point.
+
+#### _2. Direct Lighting by Importance Sampling Lights_
+
+Here are the steps of our implementation of `estimate_direct_lighting_importance`
+
+1. Similar to the above implementatio, the first step is to create a local coordinate system at the intersection point with the surface normal aligned with the Z direction.
+2. Next, for each light in the scene, the function samples `ns_area_light` points on the light source, or just one if the light is a delta light (i.e., a point source). For each sample, a ray is traced from the intersection point towards the light source, and the distance to the light source, the probability density function (pdf) for the sample, and the emitted radiance are obtained by calling the `sample_L` function on the light source.
+3. If the radiance is nonzero, a new ray is traced from the intersection point towards the sampled point on the light source, and the intersection with other scene geometry is checked. If the ray intersects any geometry, the contribution of the light source is not visible at the intersection point and the loop moves on to the next sample.
+4. If the ray does not intersect any geometry, the incoming direction w_i of the light at the intersection point is transformed to local coordinates using the `w2o` matrix. The contribution of the light source to the outgoing radiance at the intersection point is computed, similar to the above implementation, by multiplying the emitted radiance, the cosine term, and the BSDF evaluation, and dividing by the pdf of the sample.
+5. The contributions from all samples on the light source are averaged, and the loop moves on to the next light source. The final result is the sum of the contributions from all light sources in the scene, averaged by the number of samples per light source.
+
 ## Part 4: Global Illumination
 
 ## Part 5: Adaptive Sampling
