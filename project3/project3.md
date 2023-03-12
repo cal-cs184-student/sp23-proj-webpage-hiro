@@ -89,28 +89,28 @@ Here are the steps of our implementation of `estimate_direct_lighting_hemisphere
 
 1. Create a coordinate system for the hit point `isect`, with the surface normal `isect.n` aligned with the Z-axis.
 2. Compute the hit point `hit_p` and the light outgoing direction `w_out` by transforming the ray direction `r.d` into object space using the inverse of the coordinate system.
-3. Samples points uniformly from an unit hemisphere centered on `hit_p`. Set the number of samples to be the total number of area light samples multiplied by the number of lights in the scene.  
+3. Samples points uniformly from an unit hemisphere centered on `hit_p`. Set the number of samples to be the total number of area light samples multiplied by the number of lights in the scene.
 4. For each sample, it traces a ray in the sampled direction `w_i` (converted to world space for ray generation) to see if it hits an object in the scene.
 5. If the new ray hits something, compute the light coming from that object (since only light source would emit light, if the hit object is not a lightsource, it would not contribute anything). The computation is done by the reflection model we studied in lecture, that is the product of BSDF at the original hitpoint `hit_p`, the light emitted from object we hit in step 4 and the $$\cos \theta$$ term computed using the sampled direction `w_i` from step 4. This product is further divided by the PDF ($$2\pi$$ in this case) for normalizing over Monte-Carlo integration estimator.
-5. The total contribution is then accumulated over all samples and divided by the number of samples to produce an estimate of the direct lighting at the intersection point (i.e., the $$\frac{1}{N}$$ term in the Monte-Carlo integration estimator)
+6. The total contribution is then accumulated over all samples and divided by the number of samples to produce an estimate of the direct lighting at the intersection point (i.e., the $$\frac{1}{N}$$ term in the Monte-Carlo integration estimator)
 
 #### _2. Direct Lighting by Importance Sampling Lights_
 
-Here are the steps of our implementation of `estimate_direct_lighting_importance`. 
+Here are the steps of our implementation of `estimate_direct_lighting_importance`.
 
 1. Similar to the above implementatio, the first step is to create a local coordinate system at the intersection point with the surface normal aligned with the Z direction.
 2. Next, for each light in the scene, the function samples `ns_area_light` points on the light source, or just one if the light is a delta light (i.e., a point source). For each sample, a outgoing angle `w_i` to the light, the distance to the light source, the probability density function (PDF) for the sample, and the emitted radiance are obtained by calling the `sample_L` function on the light source.
 3. Trace a ray from the object to the light using the direction `w_i` and origin `hit_p`, this time, with maximum `t` value set as the distance to the light.
 4. If the ray hit something, it means an object is in between the the lightsource and the target, thus there should not be direct illumination (i.e., shadow). However, if the ray hits nothing, then it means the light from the lightsource could hit the object.
 5. We then compute the individual sample light contribution using the same computation method described in the Uniform Hemisphere Sampling case above.
-5. The contributions from all samples on the light source are averaged, and the loop moves on to the next light source. The final result is the sum of the contributions from all light sources in the scene, averaged by the number of samples per light source.
+6. The contributions from all samples on the light source are averaged, and the loop moves on to the next light source. The final result is the sum of the contributions from all light sources in the scene, averaged by the number of samples per light source.
 
 Here are some image we rendered using direct illumination with both sampling methods:
 
-|Scene| Uniform Hemisphere Sample | Lighting Importance Sample |
-|-----|---------------------------|----------------------------|
-|`sky/CBbunny.dae`|<img src="./images/p3_CBbunny_H_16_8.png" style="width:100%"/> |<img src="./images/p3_CBbunny_I_16_8.png" style="width:100%"/> |
-|`sky/CBspheres_lambertian.dae`|<img src="./images/p3_CBspheres_lambertian_H_16_8.png" style="width:100%"/> |<img src="./images/p3_CBspheres_lambertian_I_16_8.png" style="width:100%"/> |
+| Scene                          | Uniform Hemisphere Sample                                                   | Lighting Importance Sample                                                  |
+| ------------------------------ | --------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `sky/CBbunny.dae`              | <img src="./images/p3_CBbunny_H_16_8.png" style="width:100%"/>              | <img src="./images/p3_CBbunny_I_16_8.png" style="width:100%"/>              |
+| `sky/CBspheres_lambertian.dae` | <img src="./images/p3_CBspheres_lambertian_H_16_8.png" style="width:100%"/> | <img src="./images/p3_CBspheres_lambertian_I_16_8.png" style="width:100%"/> |
 
 ## Part 4: Global Illumination
 
@@ -119,8 +119,18 @@ The implementation logic of the indrect lighting function, or `at_least_one_boun
 1. Similar to direct lighting functions, the first thing is to compute the coordinate space matrix for the surface normal at the intersection point. It then computes the hit point using the ray equation, and transforms the outgoing ray direction into the local coordinate space of the intersection point.
 2. Next, the method checks if the current ray depth exceeds the maximum depth specified in the Path Tracer object. If it does, the method returns zero radiance, since the ray has reached its maximum depth and can no longer bounce.
 3. If the maximum depth has not been reached, the method computes the radiance contribution from the first bounce using the `one_bounce_radiance()` method.
-4. Then, the method samples the BSDF at the intersection point to obtain a new incoming ray direction, w_i, and the probability density function pdf for the direction. It constructs a new Ray ray2 with the hit point and incoming direction transformed back to world space.
+4. Then, the method samples the BSDF at the intersection point to obtain a new incoming ray direction, `w_i`, and the probability density function `pdf` for the direction. It constructs a new Ray `ray2` with the hit point and incoming direction transformed back to world space.
 5. The method then checks if this new ray hits any geometry in the scene using the BVH acceleration structure, and if it does, and the Russian Roulette coin flip passes, it recursively computes the radiance contribution from the new intersection point using the `at_least_one_bounce_radiance()` method.
 6. The final radiance contribution is the sum of the radiance from the first bounce and the radiance from the new intersection point, weighted by the BSDF evaluation, the cosine of the angle between the incoming and outgoing directions, and the inverse of the PDF, all divided by the constant `RUSSIAN_ROULETTE_CONT_PROB`, the probability of continuing the path (Russian Roulette probability).
 
 ## Part 5: Adaptive Sampling
+
+Adaptive Sampling is an algorithm that avoids excessive amount of sampling per pixel, which is pretty common and necessary for Monte Carlo method to avoid noise. Adaptive sampling determines when to stop sampling with statistical approach. Assuming that n samples have been traced so far, in order to figure out if we should stop sampling, we can calculate the mean $$\mu$$ and the standard deviation $$\sigma$$. And we define a variable $$I=1.96 \times \frac{\sigma}{\sqrt{n}}$$. The sampling should be stopped if $$I \leq maxTolerence \times \mu$$, where $$maxTolerence$$ is typically 0.05.
+
+Our implementation of the Adaptive Sampling algorithm is the following:
+
+1. The method starts by defining the origin of the pixel as the bottom left corner of the pixel using a Vector2D object. Then, it initializes the `pixel_light` variable as a Vector3D object, which will hold the sum of light generated by the traced rays.
+2. Then is the implementation of the Adaptive Sampling algorithm. First initializes variables `s1` and `s2` to keep track of the sum of the sample light and the sum of the square of the sample light, respectively. The variable `n` will keep track of the number of samples taken for the current pixel.
+3. The adaptive sampling loop starts by checking if the current sample is a multiple of `samplesPerBatch`. If so, it computes the mean and variance of the sample light using s1 and s2. It then computes the confidence interval of the mean using the formula $$I=1.96 \times \frac{\sigma}{\sqrt{n}}$$. If the confidence interval is less than or equal to the maximum tolerance `maxTolerance` times the mean, the loop breaks and the average light of the pixel is returned.
+4. Otherwise, generates a new sample point by adding the sample generated by a `gridSampler` to the origin of the pixel. It then generates a camera ray using the camera object and the sample point. The method `est_radiance_global_illumination` is then called to trace the ray and estimate the light of the surface it hits. The sample light is added to the `pixel_light` variable, and the sample light and sample light squared are added to s1 and s2, respectively.
+5. Finally, the loop continues until the maximum number of samples `ns_aa` is reached or until the adaptive sampling criterion is met. The average light of the pixel is then calculated by dividing the `pixel_light` variable by `n`. The pixel light and the number of samples taken for that pixel are written to the sample buffer and sample count buffer, respectively.
