@@ -7,8 +7,12 @@ layout: default
 
 # Setup
 
-The project is compiled with `Apple clang version 14.0.0`.
-All tests are performed on a 2021 MacBook Pro with Apple M1 Pro CPU (ARM).
+The project is compiled with `Apple clang version 14.0.0` and `Linux G++`.
+
+
+Part 1 and 2 images are rendered on a 2021 MacBook Pro with Apple M1 Pro CPU (ARM).  
+
+Part 3, 4 and 5 images are rendered on a hive machine.
 
 # Overview
 
