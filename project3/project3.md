@@ -128,13 +128,68 @@ We also noticed that the noise in soft shadow decreases with the increase of lig
 
 ## Part 4: Global Illumination
 
-The implementation logic of the indrect lighting function, or `at_least_one_bounce_radiance` function, is the following:
+Global illumination is implemented using the recursive solution to the rendering function discussed in lecture. 
+
+The implementation of global illumination, or `at_least_one_bounce_radiance` function, is the following:
 
 1. Similar to direct lighting functions, the first thing is to compute the coordinate space matrix for the surface normal at the intersection point. It then computes the hit point using the ray equation, and transforms the outgoing ray direction into the local coordinate space of the intersection point.
-2. Next, the method checks if the current ray depth exceeds the maximum depth specified in the Path Tracer object. If it does, the method returns zero radiance, since the ray has reached its maximum depth and can no longer bounce.
-3. If the maximum depth has not been reached, the method computes the radiance contribution from the first bounce using the `one_bounce_radiance()` method.
+2. Next, the method checks if the current ray depth exceeds the maximum depth specified in the Path Tracer object. If it does, the method returns zero radiance, since the ray has reached its maximum depth and should no longer bounce.
+3. If the maximum depth has not been reached, the method computes the radiance contribution from the first bounce (i.e., direct light) using the `one_bounce_radiance()` method.
 4. Then, the method samples the BSDF at the intersection point to obtain a new incoming ray direction, w_i, and the probability density function pdf for the direction. It constructs a new Ray ray2 with the hit point and incoming direction transformed back to world space.
 5. The method then checks if this new ray hits any geometry in the scene using the BVH acceleration structure, and if it does, and the Russian Roulette coin flip passes, it recursively computes the radiance contribution from the new intersection point using the `at_least_one_bounce_radiance()` method.
 6. The final radiance contribution is the sum of the radiance from the first bounce and the radiance from the new intersection point, weighted by the BSDF evaluation, the cosine of the angle between the incoming and outgoing directions, and the inverse of the PDF, all divided by the constant `RUSSIAN_ROULETTE_CONT_PROB`, the probability of continuing the path (Russian Roulette probability).
+
+**NOTE:** we hard coded Russian Roulette Countinue Probability to 0.8 for all the following rendering
+
+Here are some images rendered with global illumination, using 1024 sample per pixel and maximum ray depth 5 (i.e., `-s 1024 -m 5`)
+
+|Scene| Render | 
+|-----|---------------------------|
+|`sky/CBbunny.dae`|<img src="./images/p4_CBbunny_1024_1_5.png" style="width:100%"/> |
+|`sky/CBspheres_lambertian.dae`|<img src="./images/p4_CBspheres_lambertian_1024_1_5.png" style="width:100%"/> |
+
+We rendered the bunny scene with only direct lighting and indirect lighting. For indirect lighting, we used maximum ray depth 5. Both images use 1024 samples per pixel:
+
+| Only Direct Light | Only Indirect Light|
+|-----|----|
+|<img src="./images/p4_CBbunny_1024_1_1.png" style="width:100%"/>|<img src="./images/p4_CBbunny_no_direct.png" style="width:100%"/>|
+
+For `sky/CBbunny.dae`, we also rendered different max ray depth, again using 1024 sample per pixel (`-s 1024`)
+
+| Max Ray Depth 0 (`-m 0`) | Max Ray Depth 1 (`-m 1`) |
+|-----|----|
+|<img src="./images/p4_CBbunny_1024_1_0.png" style="width:100%"/>|<img src="./images/p4_CBbunny_1024_1_1.png" style="width:100%"/>|
+
+| Max Ray Depth 2 (`-m 0`) | Max Ray Depth 3 (`-m 3`) |
+|-----|----|
+|<img src="./images/p4_CBbunny_1024_1_2.png" style="width:100%"/>|<img src="./images/p4_CBbunny_1024_1_3.png" style="width:100%"/>|
+
+
+| Max Ray Depth 5 (`-m 5`) | Max Ray Depth 100 (`-m 100`) |
+|-----|----|
+|<img src="./images/p4_CBbunny_1024_1_5.png" style="width:100%"/>|<img src="./images/p4_CBbunny_1024_1_100.png" style="width:100%"/>|
+
+We noticed that the scene has become increasing brighter with the increase of max ray depth. However, the rate is slowing down drastically for max ray depth greater than 3.
+
+Specifically, we found max ray depth of 100 and max ray depth of 5 have very similar probability. This is most likely caused by Russian Roulette (i.e., the expected bounce before RR kills the ray is 5).
+
+We also rendered the bunny scene with various sample per pixel
+
+| 1 Sample Per Pixel (`-s 1`) | 2 Sample Per Pixel (`-s 2`) |
+|-----|----|
+|<img src="./images/p4_CBbunny_1_1_4.png" style="width:100%"/>|<img src="./images/p4_CBbunny_2_1_4.png" style="width:100%"/>|
+
+| 4 Sample Per Pixel (`-s 4`) | 8 Sample Per Pixel (`-s 8`) |
+|-----|----|
+|<img src="./images/p4_CBbunny_4_1_4.png" style="width:100%"/>|<img src="./images/p4_CBbunny_8_1_4.png" style="width:100%"/>|
+
+| 16 Sample Per Pixel (`-s 16`) | 64 Sample Per Pixel (`-s 64`) |
+|-----|----|
+|<img src="./images/p4_CBbunny_16_1_4.png" style="width:100%"/>|<img src="./images/p4_CBbunny_64_1_4.png" style="width:100%"/>|
+
+| 512 Sample Per Pixel (`-s 16`) | 1024 Sample Per Pixel (`-s 64`) |
+|-----|----|
+|<img src="./images/p4_CBbunny_512_1_4.png" style="width:100%"/>|<img src="./images/p4_CBbunny_1024_1_4.png" style="width:100%"/>|
+
 
 ## Part 5: Adaptive Sampling
