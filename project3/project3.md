@@ -98,19 +98,33 @@ Here are the steps of our implementation of `estimate_direct_lighting_hemisphere
 
 Here are the steps of our implementation of `estimate_direct_lighting_importance`. 
 
-1. Similar to the above implementatio, the first step is to create a local coordinate system at the intersection point with the surface normal aligned with the Z direction.
+1. Similar to the above implementation, the first step is to create a local coordinate system at the intersection point with the surface normal aligned with the Z direction.
 2. Next, for each light in the scene, the function samples `ns_area_light` points on the light source, or just one if the light is a delta light (i.e., a point source). For each sample, a outgoing angle `w_i` to the light, the distance to the light source, the probability density function (PDF) for the sample, and the emitted radiance are obtained by calling the `sample_L` function on the light source.
 3. Trace a ray from the object to the light using the direction `w_i` and origin `hit_p`, this time, with maximum `t` value set as the distance to the light.
 4. If the ray hit something, it means an object is in between the the lightsource and the target, thus there should not be direct illumination (i.e., shadow). However, if the ray hits nothing, then it means the light from the lightsource could hit the object.
-5. We then compute the individual sample light contribution using the same computation method described in the Uniform Hemisphere Sampling case above.
+5. We then compute the individual sample light contribution using the same computation method described in the Uniform Hemisphere Sampling case above (using the PDF obtained in step 2 for normalizing).
 5. The contributions from all samples on the light source are averaged, and the loop moves on to the next light source. The final result is the sum of the contributions from all light sources in the scene, averaged by the number of samples per light source.
 
-Here are some image we rendered using direct illumination with both sampling methods:
+Here are some image we rendered using direct illumination with both sampling methods: We used 16 sample per pixel and 8 light rays per light (i.e., `-s 16 -l 8`)
 
 |Scene| Uniform Hemisphere Sample | Lighting Importance Sample |
 |-----|---------------------------|----------------------------|
 |`sky/CBbunny.dae`|<img src="./images/p3_CBbunny_H_16_8.png" style="width:100%"/> |<img src="./images/p3_CBbunny_I_16_8.png" style="width:100%"/> |
 |`sky/CBspheres_lambertian.dae`|<img src="./images/p3_CBspheres_lambertian_H_16_8.png" style="width:100%"/> |<img src="./images/p3_CBspheres_lambertian_I_16_8.png" style="width:100%"/> |
+
+Here, we also compare effect of different amount of light rays: We used 1 sample per pixel and Importance sampling using the `sky/CBbunny.dae` (i.e., `-s 1`)
+
+| 1 Light Ray per Light (`-l 1`) | 4 Light Ray per Light (`-l 4`) |
+|---------------------------|----------------------------|
+|<img src="./images/p3_CBbunny_I_1_1.png" style="width:100%"/>|<img src="./images/p3_CBbunny_I_1_4.png" style="width:100%"/>|
+
+| 16 Light Ray per Light (`-l 16`) | 64 Light Ray per Light (`-l 64`) |
+|---------------------------|----------------------------|
+|<img src="./images/p3_CBbunny_I_1_16.png" style="width:100%"/>|<img src="./images/p3_CBbunny_I_1_64.png" style="width:100%"/>|
+
+**Analysis**: We noticed that importance sampling greatly reduced the noise in the rendered image compared to uniform hemisphere sampling under the same parameter value. This is expected since in hemisphere sampling, the shadow ray is sampled uniformly and since there is only one area lightsource (at the top), most shadow ray would hit something else or hit nothing which then returns 0 randiance for that sample. Importance sampling, on the other hand, guarantees that every shadow ray would hit the light unless something in between blocks the ray. Therefore, for the same amount of sampling, the importance sampling method would use these samples more efficiently (i.e., all sample would contribute to something), thus less noise.
+
+We also noticed that the noise in soft shadow decreases with the increase of light ray per light in importance sampling. This is also expected since the light source in the scene we used is an area light. Since the light spans over an area, there could be different direction the ray could trace from the object to light source. Therefore, with 1 light ray, the light is either blocked or not causing black dots in the soft shadow (i.e., noise). With more light rays, we can average out light from different direction thus creating grey (i.e., lighter black) hence the soft shadow.
 
 ## Part 4: Global Illumination
 
