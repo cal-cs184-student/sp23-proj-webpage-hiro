@@ -173,23 +173,24 @@ We noticed that the scene has become increasing brighter with the increase of ma
 
 Specifically, we found max ray depth of 100 and max ray depth of 5 have very similar probability. This is most likely caused by Russian Roulette (i.e., the expected bounce before RR kills the ray is 5).
 
-We also rendered the bunny scene with various sample per pixel
+We also rendered the bunny scene with various sample per pixel, . 
 
 | 1 Sample Per Pixel (`-s 1`) | 2 Sample Per Pixel (`-s 2`) |
 |-----|----|
-|<img src="./images/p4_CBbunny_1_1_4.png" style="width:100%"/>|<img src="./images/p4_CBbunny_2_1_4.png" style="width:100%"/>|
+|<img src="./images/p4_CBbunny_1_4_5.png" style="width:100%"/>|<img src="./images/p4_CBbunny_2_4_5.png" style="width:100%"/>|
 
 | 4 Sample Per Pixel (`-s 4`) | 8 Sample Per Pixel (`-s 8`) |
 |-----|----|
-|<img src="./images/p4_CBbunny_4_1_4.png" style="width:100%"/>|<img src="./images/p4_CBbunny_8_1_4.png" style="width:100%"/>|
+|<img src="./images/p4_CBbunny_4_4_5.png" style="width:100%"/>|<img src="./images/p4_CBbunny_8_4_5.png" style="width:100%"/>|
 
 | 16 Sample Per Pixel (`-s 16`) | 64 Sample Per Pixel (`-s 64`) |
 |-----|----|
-|<img src="./images/p4_CBbunny_16_1_4.png" style="width:100%"/>|<img src="./images/p4_CBbunny_64_1_4.png" style="width:100%"/>|
+|<img src="./images/p4_CBbunny_16_4_5.png" style="width:100%"/>|<img src="./images/p4_CBbunny_64_4_5.png" style="width:100%"/>|
 
-| 512 Sample Per Pixel (`-s 16`) | 1024 Sample Per Pixel (`-s 64`) |
+| 512 Sample Per Pixel (`-s 512`) | 1024 Sample Per Pixel (`-s 1024`) |
 |-----|----|
-|<img src="./images/p4_CBbunny_512_1_4.png" style="width:100%"/>|<img src="./images/p4_CBbunny_1024_1_4.png" style="width:100%"/>|
+|<img src="./images/p4_CBbunny_512_4_5.png" style="width:100%"/>|<img src="./images/p4_CBbunny_1024_4_5.png" style="width:100%"/>|
 
+We can see from these rendering that noise level decreases as we increase sample per pixel rate. This is because with increasing sample per pixel rate, the rendering (which is an estimation using Monte-Carlo integration) converges more to the truth. 
 
 ## Part 5: Adaptive Sampling
