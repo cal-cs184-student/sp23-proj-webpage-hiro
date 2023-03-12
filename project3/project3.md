@@ -114,4 +114,13 @@ Here are the steps of our implementation of `estimate_direct_lighting_importance
 
 ## Part 4: Global Illumination
 
+The implementation logic of the indrect lighting function, or `at_least_one_bounce_radiance` function, is the following:
+
+1. Similar to direct lighting functions, the first thing is to compute the coordinate space matrix for the surface normal at the intersection point. It then computes the hit point using the ray equation, and transforms the outgoing ray direction into the local coordinate space of the intersection point.
+2. Next, the method checks if the current ray depth exceeds the maximum depth specified in the Path Tracer object. If it does, the method returns zero radiance, since the ray has reached its maximum depth and can no longer bounce.
+3. If the maximum depth has not been reached, the method computes the radiance contribution from the first bounce using the `one_bounce_radiance()` method.
+4. Then, the method samples the BSDF at the intersection point to obtain a new incoming ray direction, w_i, and the probability density function pdf for the direction. It constructs a new Ray ray2 with the hit point and incoming direction transformed back to world space.
+5. The method then checks if this new ray hits any geometry in the scene using the BVH acceleration structure, and if it does, and the Russian Roulette coin flip passes, it recursively computes the radiance contribution from the new intersection point using the `at_least_one_bounce_radiance()` method.
+6. The final radiance contribution is the sum of the radiance from the first bounce and the radiance from the new intersection point, weighted by the BSDF evaluation, the cosine of the angle between the incoming and outgoing directions, and the inverse of the PDF, all divided by the constant `RUSSIAN_ROULETTE_CONT_PROB`, the probability of continuing the path (Russian Roulette probability).
+
 ## Part 5: Adaptive Sampling
