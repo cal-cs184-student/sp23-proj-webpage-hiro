@@ -79,7 +79,7 @@ We also compared rendering time with and without BVH. The following test is perf
 
 We see that BVH optimization greatly reduced the rendering time for more complex meshes due to the `O(log n)` asymptotic complexity. However, as we shown in the example for `CBempty.dae`, the performance of BVH is very close to the non-optimized version when the mesh is simple. This is because as there is not many premitives, there aren't anything the BVH can help skip when tracing the ray. Therefore, performance of BVH would be similar to the naive approach.
 
-## Part 3: Direct Illumination
+<!-- ## Part 3: Direct Illumination
 
 1. First, it calculates the bounding box of all the primitives in the given range, and calculates the average centroid of all the primitives. It then creates a new BVH node with the bounding box, and checks if the number of primitives in the range is less than or equal to the maximum leaf size. If so, it sets the start and end iterators of the current node to the input iterators and returns the node as a leaf node.
 2. If the number of primitives is greater than the maximum leaf size, it needs to split the primitives into two smaller groups. To do this, it first calculates the number of primitives on the left and right sides of the average centroid along each axis. It then chooses the axis with the smallest difference between the number of primitives on the left and right sides, and calculates the number of primitives on each side of the split along that axis.
@@ -88,7 +88,7 @@ We see that BVH optimization greatly reduced the rendering time for more complex
 
 | CBbunny                                                | CBlucy                                               |
 | ------------------------------------------------------ | ---------------------------------------------------- |
-| <img src="./images/p2_CBbunny.png" style="width:100%"> | <img src="./images/p2_cblue.png" style="width:100%"> |
+| <img src="./images/p2_CBbunny.png" style="width:100%"> | <img src="./images/p2_cblue.png" style="width:100%"> | -->
 
 ## Part 3: Direct Illumination
 
