@@ -7,7 +7,7 @@ layout: default
 
 # Setup
 
-The project is compiled with `Apple clang version 14.0.0` and `Linux G++`.
+The project is compiled with `Apple clang version 14.0.0` and `Linux GCC`.
 
 
 Part 1 and 2 images are rendered on a 2021 MacBook Pro with Apple M1 Pro CPU (ARM).  
@@ -106,12 +106,8 @@ Here are the steps of our implementation of `estimate_direct_lighting_importance
 2. Next, for each light in the scene, the function samples `ns_area_light` points on the light source, or just one if the light is a delta light (i.e., a point source). For each sample, a outgoing angle `w_i` to the light, the distance to the light source, the probability density function (PDF) for the sample, and the emitted radiance are obtained by calling the `sample_L` function on the light source.
 3. Trace a ray from the object to the light using the direction `w_i` and origin `hit_p`, this time, with maximum `t` value set as the distance to the light.
 4. If the ray hit something, it means an object is in between the the lightsource and the target, thus there should not be direct illumination (i.e., shadow). However, if the ray hits nothing, then it means the light from the lightsource could hit the object.
-   <<<<<<< HEAD
-5. We then compute the individual sample light contribution using the same computation method described in the Uniform Hemisphere Sampling case above.
-6. # The contributions from all samples on the light source are averaged, and the loop moves on to the next light source. The final result is the sum of the contributions from all light sources in the scene, averaged by the number of samples per light source.
-7. We then compute the individual sample light contribution using the same computation method described in the Uniform Hemisphere Sampling case above (using the PDF obtained in step 2 for normalizing).
-8. The contributions from all samples on the light source are averaged, and the loop moves on to the next light source. The final result is the sum of the contributions from all light sources in the scene, averaged by the number of samples per light source.
-    > > > > > > > 4042f8fa9d1959f8d51fa8b49e486fdb8416f030
+5. We then compute the individual sample light contribution using the same computation method described in the Uniform Hemisphere Sampling case above (using the PDF obtained in step 2 for normalizing).
+6. The contributions from all samples on the light source are averaged, and the loop moves on to the next light source. The final result is the sum of the contributions from all light sources in the scene, averaged by the number of samples per light source.
 
 Here are some image we rendered using direct illumination with both sampling methods: We used 16 sample per pixel and 8 light rays per light (i.e., `-s 16 -l 8`)
 
