@@ -7,6 +7,8 @@ layout: default
 
 # Setup
 
+This page is avaliable at <https://cal-cs184-student.github.io/sp23-proj-webpage-hiro/project3/project3.html>
+
 The project is compiled with `Apple clang version 14.0.0` and `Linux GCC`.
 
 
