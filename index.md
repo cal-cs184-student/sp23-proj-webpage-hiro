@@ -13,4 +13,4 @@ layout: home
 
 [Project 2: MeshEdit](./project2/project2.md)
 
-[Project 3: Pathtracer](./project3/project3.md)
+[Project 3: Pathtracer](./project3-1/project3.md)

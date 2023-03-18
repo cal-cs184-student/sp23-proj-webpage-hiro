@@ -1,0 +1,1 @@
+<!-- used rendering param ./pathtracer -s 256 -l 4 -m 6 -f part-2-bunny-H.png -t 8 -r 480 360 -->
