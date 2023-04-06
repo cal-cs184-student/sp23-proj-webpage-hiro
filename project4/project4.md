@@ -72,6 +72,25 @@ Below are some screenshots taken with different damping. To better illustrate da
 |<img src="./images/part-2-dan-0.png" style="width:100%">|<img src="./images/part-2-dan-2.png" style="width:100%">|
 |<img src="./images/part-2-dan-0.gif" style="width:100%">|<img src="./images/part-2-dan-2.gif" style="width:100%">|
 
+
+# Part 3: Handling collisions with other objects
+
+In this part, we handle the collision between the cloth and other objects, in particluar, sphere and a plane. We implemented collision by applying a normal (corrective) position change to the cloth if we detect the object has come in touch with te cloth.
+
+Below are screenshots of the `sphere.json` scene taken at different `ks` values
+
+| `ks = 500` | `ks = 5000` | `ks = 50000` |
+|----|----|----|
+|<img src="./images/part-3-sphere-500.png" style="width:100%">|<img src="./images/part-3-sphere-5000.png" style="width:100%">|<img src="./images/part-3-sphere-50000.png" style="width:100%">|
+
+As expected (and discussed) part 2, `ks` spring constant determines how "hard" the cloth would be. The lower `ks`, the softer the cloth and more deformation (thus wrinkles and other stuff), and the harder the cloth the less deformation.
+
+Here, we can clearly get a sense of hardness of the cloth. With `ks = 500`, there is a lot of wrinkles and the cloth hangs down almost vertically. However, with `ks = 50000`, the cloth is not hanging down naturally (i.e., hanging down with an angle outward). The internal force of the spring is pulling each point mass to prevent the cloth from hanging down vertically.
+
+Here is a screenshot of a cloth lying peacefully on a plane (under the Mirror shader)
+
+<img src="./images/part-3-plane.png" style="width:100%">
+
 # Extra Credit: Wind Simulation
 
 We can view wind as an invisible viscous fluid (i.e., air) trying to push the cloth in a certain direction. Provot (1995) proposed that we can model such behaviour by the following equation
