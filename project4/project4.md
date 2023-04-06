@@ -59,6 +59,18 @@ Below are two screenshots showing the difference of lower and higher density.
 |------------|--------------|
 |<img src="./images/part-2-den-1.png" style="width:100%">|<img src="./images/part-2-den-15.png" style="width:100%">|
 
+## Effect of damping
+
+Damping simulates the loss in energy during the simulation step. With higher damping, we simulate the case where much energy (velocity) accumulated from previous step has been lost during the simulation step, thus there are less "inertia" hence less movement in cloth. With lower damping, we simulate the case where the energy (velocity) from previous step has been well preserved, hence the cloth would be affected more by previous movement / veolocity during current simulation step.
+
+This effect is most clearly observed as with lower damping, the cloth takes much longer to settle to the rest state. This is because the cloth preserves a lot of velocity / energy from previous state, thus the cloth always overshoot the equilibrium state, and will be pulled back by various external force (and overshoot again etc.). Thus it takes longer (much much longer) for the cloth to settle down. However, with higher damping, since the cloth will be mostly affected by only the current force exerting on object, the cloth settle much quicker (since there is less overshoot).
+
+Below are some screenshots taken with different damping. To better illustrate damping, we also included a GIF for each screenshot.
+
+| Damping = 0 | Damping = 0.2% (Default) |
+|------------|--------------|
+|<img src="./images/part-2-dan-0.png" style="width:100%">|<img src="./images/part-2-dan-2.png" style="width:100%">|
+|<img src="./images/part-2-dan-0.gif" style="width:100%">|<img src="./images/part-2-dan-2.gif" style="width:100%">|
 
 # Extra Credit: Wind Simulation
 
