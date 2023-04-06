@@ -91,6 +91,58 @@ Here is a screenshot of a cloth lying peacefully on a plane (under the Mirror sh
 
 <img src="./images/part-3-plane.png" style="width:100%">
 
+# Part 5: Shader
+
+In this part of the assignment, we implemented different shaders for the cloth simulation task.
+
+In simple words, shader programs utilizes the GPU to perform tasks in different stages of the graphic rendering pipeline. It could be viewed as an abstraction towards directly programing the GPU, which could be complicated and vendor dependent (AMD vs Nvidia). The user could use the shader program to adjust the vertex position, lighting, coloring and many more other graphic properties of the rendered object. 
+
+In this project, we worked on two types of shader program, vertex shader and fragment shader. 
+
+Vertex shader (shader files ending in `.vert`) controls the vertex of the polygon that is being rendered. In our case, our vertex shader computes the position and normal vector of the vertex (in world space), as well as the `uv` vector (used in texture sampling) and tangent vector of the vertex. This code is executed relatively early in the rendering pipeline (so that later stages would be able to use the vertex information).
+
+Fragment shader (shader files ending in `.frag`) controls the final rasterization. That is, these shader programs determines the output color at the given fragement (pixel) with the vertex and texutre information provided.
+
+Blinn-Phong shader is one step more realistic compared to the simple diffusive shader. Blinn-Phong shader consists of three light components, the ambient light, the diffuse light and the specular light. The final irradiance at the pixel is computed by summing all three component.
+
+Ambient light is basically a constant light that gets projected on to each object in scene uniformly. It is computed as $$k_{a} * I_{a}$$ where both are constant. Therefore, in our implementation, we used a constant 3D vector `(0.18, 0.18, 0.18)` to represent this type of light.
+
+Diffusive light is light reflected by a perfectly diffusive material. It is computed as $$k_{d} \frac{I}{r^2} \max(0, n \cdot l)$$. In our case, we chose $$k_{d}$$ to be the constant 1.
+
+Specular light is the high-light part that is reflected directly towards the camera. It is computed as $$k_{s} \frac{I}{r^2} \max(0, n \cdot h)^p$$. We choose $$k_{s} = 0.7$$ and $$p = 64$$.
+
+Finally, here are some screenshot of the Blinn-Phong shader we implemented
+
+With Only Ambient Light
+
+| Start | End |
+|-------|-----|
+|<img src="./images/part-5-phong-amb-1.png" style="width:100%"> | <img src="./images/part-5-phong-amb-2.png" style="width:100%"> |
+
+With Only Diffusive Light
+
+| Start | End |
+|-------|-----|
+|<img src="./images/part-5-phong-diff-1.png" style="width:100%"> | <img src="./images/part-5-phong-diff-2.png" style="width:100%"> |
+
+With Only Specular Light
+
+| Start | End |
+|-------|-----|
+|<img src="./images/part-5-phong-spec-1.png" style="width:100%"> | <img src="./images/part-5-phong-spec-2.png" style="width:100%"> |
+
+The Blinn-Phong Shader
+
+| Start | End |
+|-------|-----|
+|<img src="./images/part-5-phong-1.png" style="width:100%"> | <img src="./images/part-5-phong-2.png" style="width:100%"> |
+
+For the texture shader, we re-used the Campanile image from project 1 as our custom texture, here is the result
+
+| Start | End |
+|-------|-----|
+|<img src="./images/part-5-tex-1.png" style="width:100%"> | <img src="./images/part-5-tex-2.png" style="width:100%"> |
+
 # Extra Credit: Wind Simulation
 
 We can view wind as an invisible viscous fluid (i.e., air) trying to push the cloth in a certain direction. Provot (1995) proposed that we can model such behaviour by the following equation
