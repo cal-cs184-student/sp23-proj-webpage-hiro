@@ -96,6 +96,9 @@ For scene `pinned2.json` with wind direction $$(\frac{1}{\sqrt{2}}, 0, \frac{1}{
 |----------|------------|-------------|
 |<img src="./images/part-6-pin2-1.png" style="width:100%"> | <img src="./images/part-6-pin2-2.png" style="width:100%">| <img src="./images/part-6-pin2-3.png" style="width:100%">|
 
+Here is a GIF for showcasing the wind with the `sphere.json` scene. (Please ignore the strange green dots artifact from converting mov file to GIF).
+
+<img src="./images/part-6.gif" style="width:100%"> 
 
 
 
