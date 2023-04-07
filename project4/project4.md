@@ -5,6 +5,12 @@ layout: default
 
 <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 
+<style>
+th, td {
+  padding: 2px;
+}
+</style>
+
 # Setup
 
 This page is avaliable at <https://cal-cs184-student.github.io/sp23-proj-webpage-hiro/project4/project4.html>
@@ -103,6 +109,8 @@ Vertex shader (shader files ending in `.vert`) controls the vertex of the polygo
 
 Fragment shader (shader files ending in `.frag`) controls the final rasterization. That is, these shader programs determines the output color at the given fragement (pixel) with the vertex and texutre information provided.
 
+## Blinn-Phong
+
 Blinn-Phong shader is one step more realistic compared to the simple diffusive shader. Blinn-Phong shader consists of three light components, the ambient light, the diffuse light and the specular light. The final irradiance at the pixel is computed by summing all three component.
 
 Ambient light is basically a constant light that gets projected on to each object in scene uniformly. It is computed as $$k_{a} * I_{a}$$ where both are constant. Therefore, in our implementation, we used a constant 3D vector `(0.18, 0.18, 0.18)` to represent this type of light.
@@ -137,11 +145,60 @@ The Blinn-Phong Shader
 |-------|-----|
 |<img src="./images/part-5-phong-1.png" style="width:100%"> | <img src="./images/part-5-phong-2.png" style="width:100%"> |
 
+## Texture
+
 For the texture shader, we re-used the Campanile image from project 1 as our custom texture, here is the result
 
 | Start | End |
 |-------|-----|
 |<img src="./images/part-5-tex-1.png" style="width:100%"> | <img src="./images/part-5-tex-2.png" style="width:100%"> |
+
+## Displacement and Bump
+
+Both displacemenet shader and bump shader use the same fragment shader. In the fragment shader is similar to the Blinn-Phong shader, except we modify the normal vector according to the texture to give the illusion of bumps.
+
+In displacement shader, we also modified the vertex shader to actually displace the vertices according to the texture to give a more realistic bumpy rendering.
+
+Bump Shader
+
+| Start | End |
+|-------|-----|
+|<img src="./images/part-5-bump-1.png" style="width:100%"> | <img src="./images/part-5-bump-2.png" style="width:100%"> |
+
+Displacement Shader
+
+| Start | End |
+|-------|-----|
+|<img src="./images/part-5-displacement-1.png" style="width:100%"> | <img src="./images/part-5-displacement-2.png" style="width:100%"> |
+
+We can see from the above screenshot that with bump shader, we do get an illusion of bumping. However, if we look closely, we see that the edge of the rendered sphere is still a perfect circle. On the other hand, if we look at the displacement shader, we do see that the edge of the sphere is no longer a perfect circle, the vertecies are also "bumping" according to the texture.
+
+We also look at different mesh coarseness. (Ignore the difference in size of the sphere. It is not part of the coarsness issue)
+
+Bump Shader
+
+| `-o 16 -a 16` | `-o 128 -a 128` |
+|-------|-----|
+|<img src="./images/part-5-bump-16.png" style="width:100%"> | <img src="./images/part-5-bump-128.png" style="width:100%"> |
+
+Displacement Shader
+
+| `-o 16 -a 16` | `-o 128 -a 128` |
+|-------|-----|
+|<img src="./images/part-5-displacement-16.png" style="width:100%"> | <img src="./images/part-5-displacement-128.png" style="width:100%"> |
+
+We see that change of coarsenss has a huge impact on the rendering quality for the displacement shader, but not so much for the bump shader. This is mostly because the resolution of the rendered sphere affects the number of vertices that gets rendered. 
+
+In the bump case, vertices are not touched. However, in the displacement case, we are actualy trying to move the vertices around according to the texutre. Therefore, a higher coarseness means there are more vertices we are able to move, thus the final result would look much more realistic. 
+
+
+## Mirror
+
+Here are two screenshots of the mirror shader which reflects the cubic map surrounding the scene `sphere.json`.
+
+| Start | End |
+|-------|-----|
+|<img src="./images/part-5-mirror-1.png" style="width:200%"> | <img src="./images/part-5-mirror-2.png" style="width:100%"> |
 
 # Extra Credit: Wind Simulation
 
