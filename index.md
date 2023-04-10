@@ -16,3 +16,5 @@ layout: home
 [Project 3-1: Pathtracer](./project3-1/project3.md)
 
 [Project 3-2: Pathtracer](./project3-2/project3.md)
+
+[Project 4: Cloth Sim](./project4/project4.md)

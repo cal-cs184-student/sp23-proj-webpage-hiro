@@ -17,6 +17,12 @@ This page is avaliable at <https://cal-cs184-student.github.io/sp23-proj-webpage
 
 The project is compiled with `Apple clang version 14.0.3`
 
+# Overview
+
+In this project, we implemented a spring-mass based cloth simulation. We used Verlet integration to calculate the force and movement on each point-mass. We also implemented collision with other objects, self collision and finally different shader for the cloth.
+
+In the extra credit part, we implemented wind simulation.
+
 # Part 1: Masses and Springs
 
 In this part, we built a evenly spaced grid of point masses connected by springs to represent a cloth. Each spring represents one type of force, `STRUCTUAL`, `SHEARING` and `BENDING`.
@@ -99,6 +105,40 @@ Here is a screenshot of a cloth lying peacefully on a plane (under the Mirror sh
 # Part 4: Handling Self-Collisions
 
 This part aims to implement cloth self-collision to prevent cloth from clipping through and behaving strangely. To achieve this, spatial hashing is used, which involves partitioning the 3D space into 3D boxes, and mapping each point mass's position to a float that represents a specific 3D box volume. `Cloth::hash_position`, `Cloth::build_spatial_map`, and `Cloth::self_collide` methods are implemented. Now, the simulation is updated to account for potential self-collisions by calling self_collide on each PointMass.
+
+Here are some screenshots from begin to end for the scene `selfCollision.json`
+
+| Begin | Some time later |
+|-------|--------|
+|<img src="./images/part-4-0.png" style="width:100%">|<img src="./images/part-4-1.png" style="width:100%">|
+
+| More time later | At the (semi) resting state |
+|-------|--------|
+|<img src="./images/part-4-2.png" style="width:100%">|<img src="./images/part-4-3.png" style="width:100%">|
+
+As mentioned before, with high density, we are simulating a heavier cloth, which means that we will see more wrinkle (self-collision). In the resting state, the cloth with high density would also seem more compressed. This is because the gravity force exerted on each point mass is larger.
+
+Here are some screenshots with density set to 500. We can clearly see the more wrinkles and the compressed rest state as compared to the default parameter case.
+
+| Begin | Some time later |
+|-------|--------|
+|<img src="./images/part-4-den-0.png" style="width:100%">|<img src="./images/part-4-den-1.png" style="width:100%">|
+
+| More time later | At the (semi) resting state |
+|-------|--------|
+|<img src="./images/part-4-den-2.png" style="width:100%">|<img src="./images/part-4-den-3.png" style="width:100%">|
+
+Again, similar to previous discussion, with lower `ks`, we are simulating a "softer" cloth. As springs are less stiff, we will also see the cloth to contain more wrinkles (similar to the case with high density). We also observed the more compressed rest state similar to the high density case.
+
+Here are some screenshots for lower `ks` (`ks = 500`). Notice all the artifact we discussed above could be observed here.
+
+| Begin | Some time later |
+|-------|--------|
+|<img src="./images/part-4-ks-0.png" style="width:100%">|<img src="./images/part-4-ks-1.png" style="width:100%">|
+
+| More time later | At the (semi) resting state |
+|-------|--------|
+|<img src="./images/part-4-ks-2.png" style="width:100%">|<img src="./images/part-4-ks-3.png" style="width:100%">|
 
 # Part 5: Shader
 
